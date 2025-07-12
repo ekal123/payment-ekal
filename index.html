@@ -1,318 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Gateway</title>
-    <style>
-        :root {
-            --primary: #6c5ce7;
-            --secondary: #a29bfe;
-            --dark: #2d3436;
-            --light: #f5f6fa;
-            --success: #00b894;
-            --warning: #fdcb6e;
-            --danger: #d63031;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payment Page</title>
+  <style>
+    body {
+      background: #f1f2f6;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    .container {
+      background: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
 
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+    .payment-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f0f0f0;
+      margin-bottom: 15px;
+      padding: 10px 15px;
+      border-radius: 10px;
+    }
 
-        .payment-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 500px;
-            overflow: hidden;
-            animation: fadeIn 0.5s ease-out;
-        }
+    .payment-option img {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      margin-right: 10px;
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    .payment-details {
+      flex: 1;
+      text-align: left;
+    }
 
-        .payment-header {
-            background: var(--primary);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
+    .payment-details h4 {
+      margin: 0;
+      font-size: 1rem;
+      color: #333;
+    }
 
-        .payment-header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 5px;
-        }
+    .payment-details p {
+      margin: 2px 0;
+      font-size: 0.9rem;
+      color: #666;
+    }
 
-        .payment-header p {
-            opacity: 0.9;
-        }
+    .copy-btn {
+      padding: 6px 10px;
+      background: #6c5ce7;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
 
-        .payment-body {
-            padding: 25px;
-        }
+    .copy-btn:hover {
+      background: #a29bfe;
+    }
 
-        .payment-method {
-            margin-bottom: 25px;
-        }
+    .qr-section {
+      margin-top: 25px;
+    }
 
-        .method-title {
-            font-size: 1.2rem;
-            color: var(--dark);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
+    .qr-section img {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
 
-        .method-title i {
-            margin-right: 10px;
-            font-size: 1.4rem;
-        }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2d3436;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 5px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 999;
+    }
 
-        .method-option {
-            display: flex;
-            align-items: center;
-            background: var(--light);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .method-option:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            border-color: var(--secondary);
-        }
-
-        .method-option.active {
-            border-color: var(--primary);
-            background: rgba(108, 92, 231, 0.1);
-        }
-
-        .method-logo {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-            margin-right: 15px;
-        }
-
-        .method-info {
-            flex: 1;
-        }
-
-        .method-name {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 3px;
-        }
-
-        .method-number {
-            font-size: 0.9rem;
-            color: #666;
-            word-break: break-all;
-        }
-
-        .copy-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 5px 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.8rem;
-        }
-
-        .copy-btn:hover {
-            background: var(--secondary);
-            transform: scale(1.05);
-        }
-
-        .qris-container {
-            text-align: center;
-            margin-top: 20px;
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        .qris-image {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-            border: 1px solid #eee;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .qris-image:hover {
-            transform: scale(1.02);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .instructions {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: #555;
-            border-left: 4px solid var(--primary);
-        }
-
-        .instructions ol {
-            padding-left: 20px;
-            margin-top: 10px;
-        }
-
-        .instructions li {
-            margin-bottom: 8px;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--dark);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 5px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 1000;
-        }
-
-        .toast.show {
-            opacity: 1;
-        }
-
-        @media (max-width: 480px) {
-            .payment-container {
-                border-radius: 10px;
-            }
-            
-            .payment-header h1 {
-                font-size: 1.5rem;
-            }
-            
-            .method-option {
-                padding: 12px;
-            }
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    .toast.show {
+      opacity: 1;
+    }
+  </style>
 </head>
 <body>
-    <div class="payment-container">
-        <div class="payment-header">
-            <h1>Payment Gateway</h1>
-            <p>Select your preferred payment method</p>
-        </div>
-        
-        <div class="payment-body">
-            <div class="payment-method">
-                <h2 class="method-title"><i class="fas fa-wallet"></i> E-Wallet Payment</h2>
-                
-                <div class="method-option active">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_dana_blue.svg" alt="DANA" class="method-logo">
-                    <div class="method-info">
-                        <div class="method-name">DANA</div>
-                        <div class="method-number">0895635242738</div>
-                    </div>
-                    <button class="copy-btn" onclick="copyToClipboard('0895635242738', 'DANA number copied!')">
-                        <i class="fas fa-copy"></i> Copy
-                    </button>
-                </div>
-                
-                <div class="method-option">
-                    <img src="https://files.catbox.moe/suzdim.jpg" alt="DUITNOW TNG" class="method-logo">
-                    <div class="method-info">
-                        <div class="method-name">DUITNOW TNG</div>
-                        <div class="method-number">150842399032</div>
-                    </div>
-                    <button class="copy-btn" onclick="copyToClipboard('150842399032', 'DUITNOW TNG number copied!')">
-                        <i class="fas fa-copy"></i> Copy
-                    </button>
-                </div>
-               
-            </div>
-            
-            <div class="payment-method">
-                <h2 class="method-title"><i class="fas fa-qrcode"></i> QR TNG Payment</h2>
-                
-                <div class="qris-container">
-                    <img src="https://files.catbox.moe/s222vc.jpg" alt="QR Code" class="qris-image">
-                    <p style="margin-top: 10px; color: #666;">Scan this QR code using your mobile banking or e-wallet app</p>
-                </div>
-            </div>
-            
-            <div class="instructions">
-                <strong>Payment Instructions:</strong>
-                <ol>
-                    <li>Select your preferred payment method above</li>
-                    <li>Copy the payment number or scan the QR code</li>
-                    <li>Complete the payment via your e-wallet or banking app</li>
-                    <li>Send payment confirmation if required</li>
-                </ol>
-            </div>
-        </div>
+
+<div class="container">
+  <h2>Payment Methods</h2>
+
+  <!-- DANA -->
+  <div class="payment-option">
+    <img src="https://files.catbox.moe/pceyoh.jpg" alt="DANA"/>
+    <div class="payment-details">
+      <h4>DANA</h4>
+      <p id="dana-number">0895635242738</p>
     </div>
-    
-    <div class="toast" id="toast"></div>
-    
-    <script>
-        // Set active payment method
-        const methodOptions = document.querySelectorAll('.method-option');
-        methodOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                methodOptions.forEach(opt => opt.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-        
-        // Copy to clipboard function
-        function copyToClipboard(text, message) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast(message);
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-                showToast('Failed to copy, please try again');
-            });
-        }
-        
-        // Show toast notification
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-        
-        // Smooth animations on load
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                document.querySelector('.payment-container').style.opacity = 1;
-            }, 100);
-        });
-        </cript>
+    <button class="copy-btn" onclick="copyText('0895635242738')">Copy</button>
+  </div>
+
+  <!-- DUITNOW TNG -->
+  <div class="payment-option">
+    <img src="https://files.catbox.moe/suzdim.jpg" alt="DUITNOW TNG"/>
+    <div class="payment-details">
+      <h4>DUITNOW TNG</h4>
+      <p id="duitnow-number">150842399032</p>
+    </div>
+    <button class="copy-btn" onclick="copyText('150842399032')">Copy</button>
+  </div>
+
+  <!-- QR CODE -->
+  <div class="qr-section">
+    <h4 style="margin-bottom: 10px;">QR TNG</h4>
+    <img src="https://files.catbox.moe/s222vc.jpg" alt="QR Code"/>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied!</div>
+
+<script>
+  function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast("Copied: " + text);
+    }).catch(() => {
+      showToast("Failed to copy!");
+    });
+  }
+
+  function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 3000);
+  }
+</script>
+
 </body>
 </html>
