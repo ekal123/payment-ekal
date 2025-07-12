@@ -5,82 +5,93 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Payment Page</title>
   <style>
-    body {
-      background: #f1f2f6;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
       font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 30px;
+    }
+
+    body {
+      height: 100vh;
+      background: #000;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .video-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -1;
     }
 
     .container {
-      background: #fff;
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      max-width: 400px;
-      width: 100%;
+      position: relative;
+      z-index: 1;
       text-align: center;
+      padding: 40px 20px;
+      color: white;
     }
 
-    .payment-option {
+    h2 {
+      margin-bottom: 30px;
+      color: #fff;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+    }
+
+    .btn-group {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #f0f0f0;
-      margin-bottom: 15px;
-      padding: 10px 15px;
-      border-radius: 10px;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
     }
 
-    .payment-option img {
-      width: 50px;
-      height: 50px;
-      border-radius: 10px;
-      margin-right: 10px;
-    }
-
-    .payment-details {
-      flex: 1;
-      text-align: left;
-    }
-
-    .payment-details h4 {
-      margin: 0;
+    .pay-btn, .back-btn {
+      background: rgba(108, 92, 231, 0.85);
+      color: white;
+      border: none;
+      padding: 12px 20px;
       font-size: 1rem;
-      color: #333;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s ease;
     }
 
-    .payment-details p {
-      margin: 2px 0;
-      font-size: 0.9rem;
-      color: #666;
+    .pay-btn:hover, .back-btn:hover {
+      background: rgba(162, 155, 254, 0.95);
+    }
+
+    .details {
+      margin-top: 25px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 12px;
+      display: none;
+    }
+
+    .details img {
+      max-width: 100%;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-top: 10px;
     }
 
     .copy-btn {
-      padding: 6px 10px;
       background: #6c5ce7;
       color: #fff;
+      padding: 6px 10px;
       border: none;
       border-radius: 5px;
-      font-size: 0.8rem;
+      margin-top: 10px;
       cursor: pointer;
-      transition: background 0.3s ease;
     }
 
     .copy-btn:hover {
       background: #a29bfe;
-    }
-
-    .qr-section {
-      margin-top: 25px;
-    }
-
-    .qr-section img {
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid #ccc;
     }
 
     .toast {
@@ -89,54 +100,103 @@
       left: 50%;
       transform: translateX(-50%);
       background: #2d3436;
-      color: #fff;
-      padding: 12px 20px;
+      color: white;
+      padding: 10px 20px;
       border-radius: 5px;
       opacity: 0;
       transition: opacity 0.3s ease;
-      z-index: 999;
+      z-index: 9999;
     }
 
     .toast.show {
       opacity: 1;
     }
+
+    .back-btn {
+      margin-top: 20px;
+      background: #d63031;
+    }
+
+    .back-btn:hover {
+      background: #ff7675;
+    }
   </style>
 </head>
 <body>
 
+<!-- Video Background -->
+<video autoplay muted loop playsinline class="video-background">
+  <source src="https://files.catbox.moe/fxeuxn.mp4" type="video/mp4">
+</video>
+ 
+<!-- Audio Autoplay (Hidden Video) -->
+<video autoplay loop playsinline muted style="display: none;" id="bg-audio">
+  <source src="https://files.catbox.moe/dnv7to.mp4" type="video/mp4">
+</video>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const audio = document.getElementById("bg-audio");
+    audio.muted = false;
+    audio.volume = 0.5;
+    audio.play().catch(() => {
+      console.log("Autoplay blocked until user interacts.");
+    });
+  });
+</script>
+
+<!-- Content -->
 <div class="container">
-  <h2>Payment Methods</h2>
-
-  <!-- DANA -->
-  <div class="payment-option">
-    <img src="https://files.catbox.moe/pceyoh.jpg" alt="DANA"/>
-    <div class="payment-details">
-      <h4>DANA</h4>
-      <p id="dana-number">0895635242738</p>
+  <div id="main-buttons">
+    <h2>Select Payment Method</h2>
+    <div class="btn-group">
+      <button class="pay-btn" onclick="showDetails('dana')">DANA</button>
+      <button class="pay-btn" onclick="showDetails('tng')">DUITNOW TNG</button>
+      <button class="pay-btn" onclick="showDetails('qr')">QR TNG</button>
     </div>
+  </div>
+
+  <!-- Info Sections -->
+  <div id="dana" class="details">
+    <h3>DANA</h3>
+    <p>0895635242738</p>
+    <img src="https://files.catbox.moe/pceyoh.jpg" alt="DANA Image">
     <button class="copy-btn" onclick="copyText('0895635242738')">Copy</button>
+    <br><button class="back-btn" onclick="goBack()">Back</button>
   </div>
 
-  <!-- DUITNOW TNG -->
-  <div class="payment-option">
-    <img src="https://files.catbox.moe/suzdim.jpg" alt="DUITNOW TNG"/>
-    <div class="payment-details">
-      <h4>DUITNOW TNG</h4>
-      <p id="duitnow-number">150842399032</p>
-    </div>
+  <div id="tng" class="details">
+    <h3>DUITNOW TNG</h3>
+    <p>150842399032</p>
+    <img src="https://files.catbox.moe/suzdim.jpg" alt="DUITNOW Image">
     <button class="copy-btn" onclick="copyText('150842399032')">Copy</button>
+    <br><button class="back-btn" onclick="goBack()">Back</button>
   </div>
 
-  <!-- QR CODE -->
-  <div class="qr-section">
-    <h4 style="margin-bottom: 10px;">QR TNG</h4>
-    <img src="https://files.catbox.moe/s222vc.jpg" alt="QR Code"/>
+  <div id="qr" class="details">
+    <h3>QR TNG</h3>
+    <img src="https://files.catbox.moe/s222vc.jpg" alt="QR Code">
+    <br><button class="back-btn" onclick="goBack()">Back</button>
   </div>
 </div>
 
 <div class="toast" id="toast">Copied!</div>
 
 <script>
+  function showDetails(id) {
+    document.getElementById('main-buttons').style.display = 'none';
+    document.querySelectorAll('.details').forEach(div => {
+      div.style.display = 'none';
+    });
+    document.getElementById(id).style.display = 'block';
+  }
+
+  function goBack() {
+    document.querySelectorAll('.details').forEach(div => {
+      div.style.display = 'none';
+    });
+    document.getElementById('main-buttons').style.display = 'block';
+  }
+
   function copyText(text) {
     navigator.clipboard.writeText(text).then(() => {
       showToast("Copied: " + text);
@@ -145,13 +205,13 @@
     });
   }
 
-  function showToast(message) {
-    const toast = document.getElementById("toast");
-    toast.textContent = message;
-    toast.classList.add("show");
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
     setTimeout(() => {
-      toast.classList.remove("show");
-    }, 3000);
+      toast.classList.remove('show');
+    }, 2500);
   }
 </script>
 
